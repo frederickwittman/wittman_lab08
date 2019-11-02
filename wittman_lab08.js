@@ -149,7 +149,7 @@ g2.addEdge('C', 'D', 10);
 g2.addEdge('D', 'E', 5);
 g2.addEdge('A', 'E', 1);
 
-console.log("Graph 1 Tests")
+console.log("Graph 2 Tests")
 
 console.log("Source: A")
 Dijkstra (g2, 'A');
