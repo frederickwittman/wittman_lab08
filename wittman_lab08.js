@@ -1,3 +1,10 @@
+// Fred Wittman
+// Lars Kotthoff
+// Rajiv Khadka
+// COSC 3020
+// Lab 07
+// 11/01/19
+
 class Graph {
  constructor (numberOfVertices) {
    this.numberOfVertices = numberOfVertices;
@@ -96,7 +103,7 @@ function Dijkstra (graph, source) {
   }
 }
 
-// Testing
+// Test 1
 
 g1 = new Graph (5);
 vertices = ['A', 'B', 'C', 'D', 'E'];
@@ -110,6 +117,8 @@ g1.addEdge('A', 'C', 10);
 g1.addEdge('A', 'E', 5);
 g1.addEdge('A', 'D', 1);
 g1.addEdge('D', 'E', 2);
+
+console.log("Graph 1 Tests")
 
 console.log("Source: A")
 Dijkstra (g1, 'A');
@@ -125,3 +134,34 @@ Dijkstra (g1, 'D');
 
 console.log("Source: E")
 Dijkstra (g1, 'E');
+
+// Test 2
+
+g2 = new Graph (5);
+vertices = ['A', 'B', 'C', 'D', 'E'];
+for (var i = 0; i < vertices.length; i++) {
+  g2.addVertex(vertices[i]);
+}
+
+g2.addEdge('A', 'B', 5);
+g2.addEdge('B', 'C', 6);
+g2.addEdge('C', 'D', 10);
+g2.addEdge('D', 'E', 5);
+g2.addEdge('A', 'E', 1);
+
+console.log("Graph 1 Tests")
+
+console.log("Source: A")
+Dijkstra (g2, 'A');
+
+console.log("Source: B")
+Dijkstra (g2, 'B');
+
+console.log("Source: C")
+Dijkstra (g2, 'C');
+
+console.log("Source: D")
+Dijkstra (g2, 'D');
+
+console.log("Source: E")
+Dijkstra (g2, 'E');
