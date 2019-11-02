@@ -68,28 +68,35 @@ function Dijkstra (graph, source) {
 
   while (unprocessedList.length > 0) {
     current = getMinOfDistList(unprocessedList);
-    console.log(current)
     currentDist = getDist(current, distList);
     edges = graph.AdjList.get(current);
-    console.log(edges[1])
     
     for (var j = 0; j < edges.length; j++) {
-      temp = getDistIndex(edges[j][0], distList);
+      distWIndex = getDistIndex(edges[j][0], distList);
+      distWIndex1 = getDistIndex(edges[j][0], unprocessedList);
+
       if (getDist(edges[j][0], distList) > currentDist + edges[j][1]) {
-        distList[temp][1] = currentDist + edges[j][1];
+        distList[distWIndex][1] = currentDist + edges[j][1];
+        if (distWIndex1 != undefined) {
+          unprocessedList[distWIndex1][1] = currentDist + edges[j][1];
+        }
       }
       else {
-
-        distList[temp][1] = getDist(edges[j][0], distList);
+        distList[distWIndex][1] = getDist(edges[j][0], distList);
+        if (distWIndex1 != undefined) {
+          unprocessedList[distWIndex1][1] = currentDist + edges[j][1];
+        }
       }
     }
     temp = getDistIndex(current, unprocessedList);
     unprocessedList.splice(temp, 1);
-    console.log(unprocessedList.length);
   }
-  console.log(distList[0]);
-
+  for (var k = 0; k < distList.length; k++) {
+    console.log(distList[k]);
+  }
 }
+
+// Testing
 
 g1 = new Graph (5);
 vertices = ['A', 'B', 'C', 'D', 'E'];
@@ -104,4 +111,17 @@ g1.addEdge('A', 'E', 5);
 g1.addEdge('A', 'D', 1);
 g1.addEdge('D', 'E', 2);
 
+console.log("Source: A")
 Dijkstra (g1, 'A');
+
+console.log("Source: B")
+Dijkstra (g1, 'B');
+
+console.log("Source: C")
+Dijkstra (g1, 'C');
+
+console.log("Source: D")
+Dijkstra (g1, 'D');
+
+console.log("Source: E")
+Dijkstra (g1, 'E');
