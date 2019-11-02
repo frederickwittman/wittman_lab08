@@ -54,23 +54,24 @@ function getDistIndex (vert, distList) {
 
 function Dijkstra (graph, source) {
   var distList = [];
+  var unprocessedList = [];
   for (var i = 0; i < graph.numberOfVertices; i++) {
     if (graph.vertList[i] == source) {
       distList.push([source, 0]);
+      unprocessedList.push([source, 0]);
     }
     else {
       distList.push([graph.vertList[i], Infinity]);
+      unprocessedList.push([graph.vertList[i], Infinity]);
     }
   }
-
-  var unprocessedList = Object.assign({}, distList);
-
 
   while (unprocessedList.length > 0) {
     current = getMinOfDistList(unprocessedList);
     console.log(current)
     currentDist = getDist(current, distList);
     edges = graph.AdjList.get(current);
+    console.log(edges[1])
     
     for (var j = 0; j < edges.length; j++) {
       temp = getDistIndex(edges[j][0], distList);
@@ -78,19 +79,14 @@ function Dijkstra (graph, source) {
         distList[temp][1] = currentDist + edges[j][1];
       }
       else {
-        console.log(temp)
+
         distList[temp][1] = getDist(edges[j][0], distList);
       }
     }
-    console.log(distList[0])
     temp = getDistIndex(current, unprocessedList);
-    console.log(temp)
-    console.log(unprocessedList[0])
     unprocessedList.splice(temp, 1);
-    
-    console.log(distList[0]);
+    console.log(unprocessedList.length);
   }
-
   console.log(distList[0]);
 
 }
