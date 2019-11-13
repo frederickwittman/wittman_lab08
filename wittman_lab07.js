@@ -1,15 +1,9 @@
-// Fred Wittman
-// Lars Kotthoff
-// Rajiv Khadka
-// COSC 3020
-// Lab 07
-// 11/01/19
-
 class Graph {
  constructor (numberOfVertices) {
    this.numberOfVertices = numberOfVertices;
    this.AdjList = new Map();
    this.vertList = [];
+   this.edgeList = [];
  }
   addVertex(v) {
    this.AdjList.set(v, []);
@@ -18,92 +12,56 @@ class Graph {
  addEdge(v, w, weight) {
    this.AdjList.get(v).push([w, weight]);
    this.AdjList.get(w).push([v, weight]);
- }
-
- getEdgeWeight (v, w) {
-   edges = this.AdjList.get(v);
-   for (var i = 0; i < edges.length; i++) {
-     if (edges[i][0] == w) {
-       return edges[i][1];
-     }
-   }
-   return undefined;
+   this.edgeList.push([v, w, weight]);
+   this.edgeList.push([w, v, weight]);
  }
 }
 
-function getMinOfDistList (distList) {
-  minVertex = distList[0][0];
-  minDist = distList[0][1];
-  for (var i = 0; i < distList.length; i++) {
-    if (distList[i][1] < minDist) {
-      minDist = distList[i][1];
-      minVertex = distList[i][0];
-    }
-  }
-  return minVertex;
-}
+// We assume the graph is directed.  The code could be easily modified to accomodate a graph
+// where all edges are bi-directional
 
-function getDist (vert, distList) {
-  for (var i = 0; i < distList.length; i++) {
-    if (distList[i][0] == vert) {
-      return distList[i][1];
-    }
-  }
-}
+function allPairsShortestPaths (g) {
 
-function getDistIndex (vert, distList) {
-  for (var i = 0; i < distList.length; i++) {
-    if (distList[i][0] == vert) {
-      return i;
-    }
-  }
-}
+  var matrix = [];
 
-function Dijkstra (graph, source) {
-  var distList = [];
-  var unprocessedList = [];
-  for (var i = 0; i < graph.numberOfVertices; i++) {
-    if (graph.vertList[i] == source) {
-      distList.push([source, 0]);
-      unprocessedList.push([source, 0]);
+  // Create matrix of 0s 
+  for (var i = 0; i < g.numberOfVertices; i++) {
+    a = [];
+    for (var j = 0; j < g.numberOfVertices; j++) {
+      a[j] = Infinity;
     }
-    else {
-      distList.push([graph.vertList[i], Infinity]);
-      unprocessedList.push([graph.vertList[i], Infinity]);
-    }
+    matrix.push(a);
   }
 
-  while (unprocessedList.length > 0) {
-    current = getMinOfDistList(unprocessedList);
-    currentDist = getDist(current, distList);
-    edges = graph.AdjList.get(current);
-    
-    for (var j = 0; j < edges.length; j++) {
-      distWIndex = getDistIndex(edges[j][0], distList);
-      distWIndex1 = getDistIndex(edges[j][0], unprocessedList);
+  // Initialize [v][v] to 0
+  for (var j = 0; j < g.numberOfVertices; j++) {
+    matrix[j][j] = 0;
+  }
 
-      if (getDist(edges[j][0], distList) > currentDist + edges[j][1]) {
-        distList[distWIndex][1] = currentDist + edges[j][1];
-        if (distWIndex1 != undefined) {
-          unprocessedList[distWIndex1][1] = currentDist + edges[j][1];
-        }
-      }
-      else {
-        distList[distWIndex][1] = getDist(edges[j][0], distList);
-        if (distWIndex1 != undefined) {
-          unprocessedList[distWIndex1][1] = currentDist + edges[j][1];
+  // Initialize [u][v] to weight(u, v)
+  for (var k = 0; k < g.edgeList.length; k++) {
+    u = g.vertList.indexOf(g.edgeList[k][0]);
+    v = g.vertList.indexOf(g.edgeList[k][1]);
+    weight = g.edgeList[k][2];
+
+    matrix[u][v] = weight;
+  }
+
+  // Floyd-Warshall algorithm
+  for (var k = 0; k < g.numberOfVertices; k++) {
+    for (var i = 0; i < g.numberOfVertices; i++) {
+      for (var j = 0; j < g.numberOfVertices; j++) {
+        if (matrix[i][j] > matrix[i][k] + matrix[k][j]) {
+           matrix[i][j] = matrix[i][k] + matrix[k][j]
         }
       }
     }
-    temp = getDistIndex(current, unprocessedList);
-    unprocessedList.splice(temp, 1);
   }
-  for (var k = 0; k < distList.length; k++) {
-    console.log(distList[k]);
+
+  for (var i = 0; i < matrix.length; i++) {
+      console.log(matrix[i]);
   }
 }
-
-// Test 1
 
 g1 = new Graph (5);
 vertices = ['A', 'B', 'C', 'D', 'E'];
@@ -120,20 +78,8 @@ g1.addEdge('D', 'E', 2);
 
 console.log("Graph 1 Tests")
 
-console.log("Source: A")
-Dijkstra (g1, 'A');
 
-console.log("Source: B")
-Dijkstra (g1, 'B');
-
-console.log("Source: C")
-Dijkstra (g1, 'C');
-
-console.log("Source: D")
-Dijkstra (g1, 'D');
-
-console.log("Source: E")
-Dijkstra (g1, 'E');
+allPairsShortestPaths (g1);
 
 // Test 2
 
@@ -150,18 +96,4 @@ g2.addEdge('D', 'E', 5);
 g2.addEdge('A', 'E', 1);
 
 console.log("Graph 2 Tests")
-
-console.log("Source: A")
-Dijkstra (g2, 'A');
-
-console.log("Source: B")
-Dijkstra (g2, 'B');
-
-console.log("Source: C")
-Dijkstra (g2, 'C');
-
-console.log("Source: D")
-Dijkstra (g2, 'D');
-
-console.log("Source: E")
-Dijkstra (g2, 'E');
+allPairsShortestPaths (g2);
